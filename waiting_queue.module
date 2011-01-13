@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * Runs the named queue with no timeout.
+ *
+ * @param $queue_name
+ *   Arbitrary string. The name of the queue to work with.
+ */
+function waiting_queue_process_queue($queue_name) {
+  set_time_limit(0);
+
+  while (TRUE) {
+    try {
+      $queue = drupal_queue_get($queue_name);
+      $function = waiting_queue_get_callback_function($queue_name);
+      while ($item = $queue->claimItem()) {
+        $function($item->data);
+        $queue->deleteItem($item);
+      }
+    }
+    catch (Exception $e) {
+      $error_info = array(
+        '%queue_name' => $queue_name,
+        '%error_message' => $e->getMessage(),
+      );
+      watchdog('waiting_queue', t("Error processing queue %queue_name, got error '%error_message'.", $error_info));
+    }
+  }
+}
+
+/**
+ * Gets the callback function for the given queue.
+ */
+function waiting_queue_get_callback_function($queue_name) {
+  $queues = module_invoke_all('cron_queue_info');
+  drupal_alter('cron_queue_info', $queues);
+  if (isset($queues[$queue_name])) {
+    return $queues[$queue_name]['worker callback'];
+  }
+}
+
