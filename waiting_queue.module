@@ -11,7 +11,7 @@ function waiting_queue_process_queue($queue_name) {
 
   while (TRUE) {
     try {
-      $queue = drupal_queue_get($queue_name);
+      $queue = DrupalQueue::get($queue_name);
       $function = waiting_queue_get_callback_function($queue_name);
       while ($item = $queue->claimItem()) {
         $function($item->data);
