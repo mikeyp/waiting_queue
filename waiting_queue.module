@@ -8,14 +8,25 @@
  */
 function waiting_queue_process_queue($queue_name) {
   set_time_limit(0);
+  $default_queue_process_lifetime = variable_get('waiting_queue_process_lifetime', 3600);
+  $end_time = variable_get('waiting_queue_process_lifetime_' . $queue_name, $default_queue_process_lifetime) + time();
+
+  $queue = drupal_queue_get($queue_name);
+  $function = waiting_queue_get_callback_function($queue_name);
 
   while (TRUE) {
     try {
-      $queue = DrupalQueue::get($queue_name);
-      $function = waiting_queue_get_callback_function($queue_name);
       while ($item = $queue->claimItem()) {
-        $function($item->data);
-        $queue->deleteItem($item);
+        if (time() < $end_time) {
+          // Only run the job if we haven't exceeded processing lifetime after claiming.
+          $function($item->data);
+          $queue->deleteItem($item);
+        }
+        else {
+          $queue->releaseItem($item);
+          // watchdog('waiting_queue', t("Reached processing time limit, stopping processing of queue '%queue_name'.", array('%queue_name' => $queue_name)));
+          break 2;
+        }
       }
     }
     catch (Exception $e) {
@@ -24,6 +35,9 @@ function waiting_queue_process_queue($queue_name) {
         '%error_message' => $e->getMessage(),
       );
       watchdog('waiting_queue', t("Error processing queue %queue_name, got error '%error_message'.", $error_info));
+      if (!empty($item) && waiting_queue_delete_on_exception($queue_name)) {
+        $queue->deleteItem($item);
+      }
     }
   }
 }
