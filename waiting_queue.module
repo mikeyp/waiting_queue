@@ -11,7 +11,7 @@ function waiting_queue_process_queue($queue_name) {
   $default_queue_process_lifetime = variable_get('waiting_queue_process_lifetime', 3600);
   $end_time = variable_get('waiting_queue_process_lifetime_' . $queue_name, $default_queue_process_lifetime) + time();
 
-  $queue = drupal_queue_get($queue_name);
+  $queue = DrupalQueue::get($queue_name);
   $function = waiting_queue_get_callback_function($queue_name);
 
   while (TRUE) {
@@ -50,6 +50,20 @@ function waiting_queue_get_callback_function($queue_name) {
   drupal_alter('cron_queue_info', $queues);
   if (isset($queues[$queue_name])) {
     return $queues[$queue_name]['worker callback'];
+  }
+}
+
+/**
+ * Get the failure behaviour configured for this queue.
+ */
+function waiting_queue_delete_on_exception($queue_name) {
+  $queues = module_invoke_all('cron_queue_info');
+  drupal_alter('cron_queue_info', $queues);
+  if (isset($queues[$queue_name], $queues[$queue_name]['delete on exception'])) {
+    return $queues[$queue_name]['delete on exception'];
+  }
+  else {
+    return variable_get('waiting_queue_delete_on_exception', TRUE);
   }
 }
 
