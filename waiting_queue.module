@@ -24,7 +24,6 @@ function waiting_queue_process_queue($queue_name) {
         }
         else {
           $queue->releaseItem($item);
-          // watchdog('waiting_queue', t("Reached processing time limit, stopping processing of queue '%queue_name'.", array('%queue_name' => $queue_name)));
           break 2;
         }
       }
