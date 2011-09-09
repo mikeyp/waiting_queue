@@ -45,10 +45,17 @@ function waiting_queue_process_queue($queue_name) {
  * Gets the callback function for the given queue.
  */
 function waiting_queue_get_callback_function($queue_name) {
-  $queues = module_invoke_all('cron_queue_info');
-  drupal_alter('cron_queue_info', $queues);
+  $cron_queues = module_invoke_all('cron_queue_info');
+  drupal_alter('cron_queue_info', $cron_queues);
+  if (isset($cron_queues[$queue_name])) {
+    return $cron_queues[$queue_name]['worker callback'];
+  }
+
+  // Check for modules implementing hook_queue_info().
+  $queues = module_invoke_all('queue_info');
+  drupal_alter('queue_info', $queues);
   if (isset($queues[$queue_name])) {
-    return $queues[$queue_name]['worker callback'];
+    return $queues[$queue_name]['cron']['callback'];
   }
 }
 
