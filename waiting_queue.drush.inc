@@ -25,12 +25,6 @@ function waiting_queue_drush_command() {
 }
 
 /**
-* Runs the named queue with no timeout.
-*
-* @param $queue_name
-*   Arbitrary string. The name of the queue to work with.
-*/
-/**
  * Gateway to either a signal or non-signal based waiting_queue implementation.
  *
  * Signal handling gives us a much more robust and precise queue, so we use it
