@@ -109,20 +109,8 @@ class WaitingQueueSignalHandler {
    * Terminate the current process as safely as possible.
    */
   protected function gracefulExit() {
-    // Use POSIX self-exiting to be slightly safer and more API-friendly...but
-    // only if there isn't a custom signal handler installed for SIGTERM.
-    if (function_exists('posix_kill') && !in_array(SIGTERM, $this->signals)) {
-      posix_kill(posix_getpid(), SIGTERM);
-      // Probably will never get here, but ensure the signal goes. See example
-      // in http://www.php.net/manual/en/function.pcntl-signal-dispatch.php
-      pcntl_signal_dispatch();
-    }
-    // Otherwise, exit the old-fashioned way.
-    else {
-      // TODO need to do a little investigating to make sure that exiting like
-      // this is a safe enough option.
-      exit();
-    }
+    // Simply exit. Child classes should put cleanup logic here, if needed.
+    exit();
   }
 
   protected function installHandlers($rebootSignals) {
