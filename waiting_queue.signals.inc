@@ -54,7 +54,14 @@ class WaitingQueueSignalHandler {
     $this->installHandlers($rebootSignals);
   }
 
-  public function startJob() {
+  /**
+   * Informs the signal handler that job processing is commencing.
+   *
+   * @param mixed $item
+   *   The job payload that is about to be processed. There are no restrictions
+   *   on payload format, though they tend to be serialize()d strings.
+   */
+  public function startJob($item) {
     $this->processing = TRUE;
   }
 
@@ -156,7 +163,7 @@ function _waiting_queue_process_queue_signals($queue_name) {
   while (TRUE) {
     try {
       while ($item = $queue->claimItem()) {
-        $signal_handler->startJob();
+        $signal_handler->startJob($item);
 
         $function($item->data);
         $queue->deleteItem($item);
