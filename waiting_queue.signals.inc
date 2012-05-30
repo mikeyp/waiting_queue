@@ -69,7 +69,7 @@ class WaitingQueueSignalHandler {
   }
 
   public function rebootRequired() {
-    return $this->rebootRequired;
+    $this->rebootRequired = TRUE;
   }
 
   public function signalHandler($signal) {
