@@ -38,12 +38,12 @@ class WaitingQueueSignalHandler {
   protected $interrupted = FALSE;
 
   /**
-   * Create a new signal handler helper, attaching to it the set of desired
+   * Creates a new signal handler helper, attaching to it the set of desired
    * signals.
    *
    * @param array $rebootSignals
    *   An array of signals (e.g., SIGINT, SIGTERM, SIGHUP). The only disallowed
-   *   signal is SIGALRM, as that is already in use internally.
+   *   signal is SIGALRM, as waiting_queue uses it internally.
    */
   public function __construct(array $rebootSignals = array()) {
     if (in_array(SIGALRM, $rebootSignals)) {
@@ -65,6 +65,12 @@ class WaitingQueueSignalHandler {
     $this->processing = TRUE;
   }
 
+  /**
+   * Informs the signal handler that job processing has finished.
+   *
+   * Calling this method does not imply success or failure of the job, only that
+   * processing has ceased.
+   */
   public function finishJob() {
     $this->processing = FALSE;
     // Reset interrupt state, even though it shouldn't matter.
@@ -75,10 +81,23 @@ class WaitingQueueSignalHandler {
     }
   }
 
+  /**
+   * Informs the signal handler that a reboot is needed at the next possible
+   * opportunity.
+   */
   public function rebootRequired() {
     $this->rebootRequired = TRUE;
   }
 
+  /**
+   * Processes an incoming signal.
+   *
+   * This is the main signal handler method, used to process all signals except
+   * SIGALRM.
+   *
+   * @param integer $signal
+   *   The signal sent, as an integer.
+   */
   public function signalHandler($signal) {
     if (TRUE === $this->processing) {
       $this->rebootRequired();
@@ -94,8 +113,17 @@ class WaitingQueueSignalHandler {
         }
       }
     }
+    else {
+      $this->gracefulExit();
+    }
   }
 
+  /**
+   * Processes an incoming SIGALRM, used for intentional timed self-termination.
+   *
+   * @param integer $signal
+   *   The integer value of SIGALRM (14).
+   */
   public function alarmHandler($signal) {
     if (TRUE === $this->processing) {
       $this->rebootRequired();
@@ -113,6 +141,11 @@ class WaitingQueueSignalHandler {
     exit();
   }
 
+  /**
+   * Registers signal handlers with the current PHP process.
+   *
+   * @param array $rebootSignals
+   */
   protected function installHandlers($rebootSignals) {
     $this->signals = $rebootSignals;
 
