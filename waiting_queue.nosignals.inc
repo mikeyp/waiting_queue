@@ -11,6 +11,11 @@ function _waiting_queue_process_queue_nosignals($queue_name) {
   $end_time = variable_get('waiting_queue_process_lifetime_' . $queue_name, $default_queue_process_lifetime) + time();
 
   $queue = DrupalQueue::get($queue_name);
+  // If the queue implements our interface for optionally blocking on claimItem,
+  // we set it to block.
+  if ($queue instanceof WaitingQueueBlockingQueueInterface) {
+    $queue->setClaimItemBlocking(TRUE);
+  }
   $function = waiting_queue_get_callback_function($queue_name);
 
   if (variable_get('waiting_queue_print_pid_' . $queue_name, FALSE) || variable_get('waiting_queue_print_pid', FALSE)) {

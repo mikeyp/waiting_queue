@@ -165,6 +165,11 @@ class WaitingQueueSignalHandler {
  */
 function _waiting_queue_process_queue_signals($queue_name) {
   $queue = DrupalQueue::get($queue_name);
+  // If the queue implements our interface for optionally blocking on claimItem,
+  // we set it to block.
+  if ($queue instanceof WaitingQueueBlockingQueueInterface) {
+    $queue->setClaimItemBlocking(TRUE);
+  }
   $function = waiting_queue_get_callback_function($queue_name);
 
   $default_reboot_signals = variable_get('waiting_queue_reboot_signals', array(SIGTERM, SIGINT));
