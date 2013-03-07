@@ -23,6 +23,16 @@ class WaitingQueueBlockingSystemQueue extends SystemQueue implements WaitingQueu
    */
   public $pollingInterval = 1000000;
 
+  /**
+   * Change the blocking behavior of the claimItem method.
+   *
+   * By default the claimItem method in this class will not block until there
+   * is an item to return, but optionally you can use this method to change
+   * this behavior so that it will block.
+   *
+   * @param $blocking
+   *   The new blocking status to set.
+   */
   public function setClaimItemBlocking(boolean $blocking) {
     $this->blocking = $blocking;
   }
@@ -40,5 +50,6 @@ class WaitingQueueBlockingSystemQueue extends SystemQueue implements WaitingQueu
       // repeat the loop. We need the || TRUE at the end, because the usleep
       // function returns NULL which would exit our loop.
     } while (($item === FALSE) && (usleep($this->pollingInterval) || TRUE));
+    return $item;
   }
 }
