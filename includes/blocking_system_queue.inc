@@ -33,7 +33,7 @@ class WaitingQueueBlockingSystemQueue extends SystemQueue implements WaitingQueu
    * @param $blocking
    *   The new blocking status to set.
    */
-  public function setClaimItemBlocking(boolean $blocking) {
+  public function setClaimItemBlocking($blocking) {
     $this->blocking = $blocking;
   }
 

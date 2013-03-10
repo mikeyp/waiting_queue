@@ -18,6 +18,6 @@ interface WaitingQueueBlockingQueueInterface {
   /**
    * Change the blocking behavior of the claimItem method.
    */
-  public function setClaimItemBlocking(boolean $blocking);
+  public function setClaimItemBlocking($blocking);
 
 }
