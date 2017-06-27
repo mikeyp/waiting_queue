@@ -1,0 +1,6 @@
+{
+    "name": "mikeyp/waiting_queue",
+    "description": "Enables queues with workers that wait indefinitely for jobs.",
+    "type": "drupal-module",
+    "license": "GPL 2.0+"
+}
