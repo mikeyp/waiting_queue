@@ -136,6 +136,7 @@ class SignalQueueRunnerService {
           $queue->releaseItem($item);
           $this->finishJob();
         } catch (SuspendQueueException $e) {
+          // @TODO Figure out how to handle this, as it only really makes sense with cron...maybe set a timeout and try again later with some sort of backoff??
           // If the worker indicates there is a problem with the whole queue,
           // release the item and skip to the next queue.
           $queue->releaseItem($item);
@@ -260,7 +261,7 @@ class SignalQueueRunnerService {
 
     declare(ticks = 1);
     foreach ($rebootSignals as $signal) {
-      $success = pcntl_signal($signal, [$this, 'signalHandler']);
+      pcntl_signal($signal, [$this, 'signalHandler']);
     }
     pcntl_signal(SIGALRM, [$this, 'alarmHandler']);
   }
