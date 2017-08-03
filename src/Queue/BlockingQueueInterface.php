@@ -1,9 +1,6 @@
 <?php
 
-/**
- * @file
- *   Provides an interface for queues that can optionally block on claimItem.
- */
+namespace Drupal\waiting_queue\Queue;
 
 /**
  * An interface for DrupalQueue classes that can optionally block on claimItem.
@@ -13,7 +10,7 @@
  * object can be useful when processing the queue in a user-facing page request,
  * or when processing by a backend daemon.
  */
-interface WaitingQueueBlockingQueueInterface {
+interface BlockingQueueInterface {
 
   /**
    * Change the blocking behavior of the claimItem method.

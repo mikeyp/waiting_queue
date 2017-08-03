@@ -1,0 +1,11 @@
+services:
+  waiting_queue.database_blocking_queue:
+    class: Drupal\waiting_queue\Queue\DatabaseBlockingQueueFactory
+    arguments: ['@database']
+  waiting_queue.queue_runner_service:
+    class: Drupal\waiting_queue\QueueRunnerService
+    arguments: ['@queue', '@plugin.manager.queue_worker', '@settings']
+  waiting_queue.signal_queue_runner_service:
+    class: Drupal\waiting_queue\SignalQueueRunnerService
+    arguments: ['@queue', '@plugin.manager.queue_worker', '@settings', '@logger.factory' ]
+

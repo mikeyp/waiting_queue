@@ -1,17 +1,16 @@
 <?php
 
-/**
- * @file
- *   Provides a class that allows a SystemQueue to block on claimItem.
- */
+namespace Drupal\waiting_queue\Queue;
+
+use Drupal\Core\Queue\DatabaseQueue;
 
 /**
- * A blocking version of the default SystemQueue.
+ * A blocking version of the default DatabaseQueue.
  *
  * This class simply makes calls to its claimItem method optionally block, this
  * allows you to run queue processors that can block until there's an item to process.
  */
-class WaitingQueueBlockingSystemQueue extends SystemQueue implements WaitingQueueBlockingQueueInterface {
+class DatabaseBlockingQueue extends DatabaseQueue implements BlockingQueueInterface {
 
   /**
    * Boolean indicating if this queue's claimItem method is going to block.

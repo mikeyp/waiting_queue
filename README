@@ -20,11 +20,11 @@ defaulting to 1 second.
 
 To use this, simply change the queue class in your settings.php:
 
-    $conf['queue_class_QUEUE_NAME'] = 'WaitingQueueBlockingSystemQueue';
+    $settings['queue_service_QUEUE_NAME'] = 'waiting_queue.database_blocking_queue';
 
 or
 
-    $conf['queue_default_class'] = 'WaitingQueueBlockingSystemQueue';
+    $settings['queue_default'] = 'waiting_queue.database_blocking_queue';
 
 As far as other systems as concerned the queue will be the same, but Waiting
 Queue processors will set the queue to block when claiming items for better

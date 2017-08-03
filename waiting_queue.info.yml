@@ -1,0 +1,5 @@
+name: "Waiting queue"
+package: Queue
+description: "Enables queues with workers that wait indefinitely for jobs."
+core: 8.x
+type: module

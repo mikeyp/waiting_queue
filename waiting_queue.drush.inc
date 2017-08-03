@@ -35,11 +35,10 @@ function waiting_queue_drush_command() {
 function waiting_queue_process_queue($queue_name) {
   set_time_limit(0);
   if (function_exists('pcntl_signal')) {
-    require_once dirname(__FILE__) . '/waiting_queue.signals.inc';
-    _waiting_queue_process_queue_signals($queue_name);
+    $queue_runner = \Drupal::service('waiting_queue.signal_queue_runner_service');
   }
   else {
-    require_once dirname(__FILE__) . '/waiting_queue.nosignals.inc';
-    _waiting_queue_process_queue_nosignals($queue_name);
+    $queue_runner = \Drupal::service('waiting_queue.queue_runner_service');
   }
+  $queue_runner->processQueue($queue_name);
 }
