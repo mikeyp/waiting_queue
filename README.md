@@ -10,12 +10,12 @@ daemons should always be avoided, mkay?
 Using with Drupal's standard queues
 -----------------------------------
 
-Drupal's default 'SystemQueue' class is non-blocking, which means that if the
+Drupal's default `DatabaseQueue` class is non-blocking, which means that if the
 queue is empty, and you point a Waiting queue processor at it, it's going to
 poll your database for new items as often as it can, e.g. it's going to put
 significant load on it. As a workaround, if using an external blocking queue
 system like Beanstalkd is not possible, Waiting Queue provides a simple
-extension to the SystemQueue that polls the database at a configurable interval,
+extension to the `DatabaseQueue` that polls the database at a configurable interval,
 defaulting to 1 second.
 
 To use this, simply change the queue class in your settings.php:
